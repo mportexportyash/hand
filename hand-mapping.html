@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Mapping - Flex Control</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --dark: #1a1a2e;
+            --surface: #16213e;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f3460;
+            color: white;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Copy from Dashboard */
+        .sidebar { width: 240px; background: var(--dark); padding: 20px; border-right: 1px solid var(--primary); }
+        .nav-item { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; opacity: 0.7; }
+        .nav-item.active { opacity: 1; color: var(--primary); font-weight: bold; }
+
+        .main-content { flex-grow: 1; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+
+        /* Hand Mapping Visualization */
+        .mapping-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* The "Hand" Skeleton */
+        .hand-skeleton {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px dashed var(--primary);
+        }
+
+        .palm {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: var(--primary);
+            border-radius: 20px;
+            opacity: 0.8;
+        }
+
+        /* Finger Styling */
+        .finger {
+            position: absolute;
+            width: 18px;
+            background: linear-gradient(to top, var(--primary), #ffffff);
+            border-radius: 10px;
+            transform-origin: bottom center;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Specific Finger Offsets */
+        #thumb  { height: 60px; bottom: 130px; left: 60px; transform: rotate(-30deg); }
+        #index  { height: 90px; bottom: 200px; left: 100px; }
+        #middle { height: 100px; bottom: 210px; left: 140px; }
+        #ring   { height: 90px; bottom: 200px; left: 180px; }
+        #pinky  { height: 70px; bottom: 180px; left: 220px; }
+
+        /* Data Readout Panel */
+        .data-panel {
+            background: var(--dark);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-family: monospace;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .data-row span:last-child { color: var(--primary); font-weight: bold; }
+
+        h2 { color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>FLEX CONTROL</h2>
+        <div class="nav-item">Dashboard</div>
+        <div class="nav-item active">Hand Mapping</div>
+        <div class="nav-item">7-Channel Logs</div>
+        <div class="nav-item">Settings</div>
+    </div>
+
+    <div class="main-content">
+        <h2>Real-Time Hand Mapping</h2>
+        
+        <div class="mapping-container">
+            <div class="hand-skeleton">
+                <div class="palm"></div>
+                <div class="finger" id="thumb"></div>
+                <div class="finger" id="index"></div>
+                <div class="finger" id="middle"></div>
+                <div class="finger" id="ring"></div>
+                <div class="finger" id="pinky"></div>
+            </div>
+
+            <div class="data-panel">
+                <h3>Sensor Input (Deg)</h3>
+                <div class="data-row"><span>S1: Thumb</span> <span id="val1">0°</span></div>
+                <div class="data-row"><span>S2: Index</span> <span id="val2">0°</span></div>
+                <div class="data-row"><span>S3: Middle</span> <span id="val3">0°</span></div>
+                <div class="data-row"><span>S4: Ring</span> <span id="val4">0°</span></div>
+                <div class="data-row"><span>S5: Pinky</span> <span id="val5">0°</span></div>
+                <div class="data-row"><span>S6: Wrist Pitch</span> <span id="val6">0°</span></div>
+                <div class="data-row"><span>S7: Wrist Roll</span> <span id="val7">0°</span></div>
+                
+                <p style="font-size: 0.8rem; opacity: 0.5; margin-top: 20px;">
+                    * Mapping logic: $Bend = (Input / 1023) \times 90^{\circ}$
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate data stream
+        function updateMapping() {
+            const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+            
+            fingers.forEach((id, index) => {
+                const angle = Math.floor(Math.random() * 80); // Simulate 0 to 80 degrees
+                const element = document.getElementById(id);
+                const text = document.getElementById(`val${index + 1}`);
+                
+                // Update CSS rotation (negative rotates forward in this 2D view)
+                if(id === 'thumb') {
+                    element.style.transform = `rotate(${-30 + (angle/2)}deg) scaleY(${1 - angle/200})`;
+                } else {
+                    element.style.transform = `rotateX(${angle}deg)`;
+                }
+                
+                text.innerText = angle + "°";
+            });
+
+            // Update Wrist Pitch/Roll labels
+            document.getElementById('val6').innerText = Math.floor(Math.random() * 45) + "°";
+            document.getElementById('val7').innerText = Math.floor(Math.random() * 180) + "°";
+        }
+
+        setInterval(updateMapping, 150);
+    </script>
+</body>
+</html>

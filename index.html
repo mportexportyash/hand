@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Sensor 7-Channel Dashboard</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --sidebar-width: 240px;
+            --dark: #1a1a2e;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f3460;
+            color: white;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            padding: 20px;
+            border-right: 1px solid var(--primary);
+        }
+
+        .sidebar h2 { color: var(--primary); font-size: 1.2rem; }
+        .nav-item { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; transition: 0.3s; }
+        .nav-item:hover { color: var(--primary); padding-left: 10px; }
+
+        /* --- Main Content --- */
+        .main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            height: 60px;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* --- 7 Flex Sensor Visualization (One Direction) --- */
+        .sensor-container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(0,0,0,0.2);
+            margin: 20px;
+            border-radius: 10px;
+        }
+
+        .sensor-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sensor-label { width: 100px; font-weight: bold; color: var(--primary); }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 12px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            width: 70%; /* Dynamic data */
+            transition: width 0.5s ease;
+        }
+
+        /* --- 3 Hand Models Section --- */
+        .hands-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .hand-card {
+            background: var(--dark);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hand-visual {
+            width: 100px;
+            height: 150px;
+            background: #e74c3c;
+            border-radius: 40px 40px 10px 10px;
+            position: relative;
+            transform: rotateX(20deg);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .hand-card h3 { margin-top: 20px; font-size: 0.9rem; opacity: 0.7; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>FLEX CONTROL</h2>
+        <div class="sidebar">
+            <h2>FLEX CONTROL</h2>
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <div class="nav-item">Dashboard</div>
+            </a>
+        
+            <a href="hand-mapping.html" style="text-decoration: none; color: inherit;">
+                <div class="nav-item">Hand Mapping</div>
+            </a>
+        
+            <a href="logs.html" style="text-decoration: none; color: inherit;">
+                <div class="nav-item">7-Channel Logs</div>
+            </a>
+        
+            <a href="settings.html" style="text-decoration: none; color: inherit;">
+                <div class="nav-item">Settings</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="navbar">
+            <div class="status">System Status: <span style="color: #00ff00;">Active</span></div>
+            <div class="user">Admin Panel</div>
+        </div>
+
+        <div class="sensor-container">
+            <div class="sensor-row"><div class="sensor-label">Sensor 1</div><div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div></div>
+            <div class="sensor-row"><div class="sensor-label">Sensor 2</div><div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div></div>
+            <div class="sensor-row"><div class="sensor-label">Sensor 3</div><div class="progress-bar"><div class="progress-fill" style="width: 65%;"></div></div></div>
+            <div class="sensor-row"><div class="sensor-label">Sensor 4</div><div class="progress-bar"><div class="progress-fill" style="width: 20%;"></div></div></div>
+            <div class="sensor-row"><div class="sensor-label">Sensor 5</div><div class="progress-bar"><div class="progress-fill" style="width: 90%;"></div></div></div>
+            <div class="sensor-row"><div class="sensor-label">Sensor 6</div><div class="progress-bar"><div class="progress-fill" style="width: 55%;"></div></div></div>
+            <div class="sensor-row"><div class="sensor-label">Sensor 7</div><div class="progress-bar"><div class="progress-fill" style="width: 30%;"></div></div></div>
+        </div>
+
+        <div class="hands-grid">
+            <div class="hand-card">
+                <div class="hand-visual"></div>
+                <h3>Model A (Left)</h3>
+            </div>
+            <div class="hand-card">
+                <div class="hand-visual" style="background: #2ecc71;"></div>
+                <h3>Model B (Center)</h3>
+            </div>
+            <div class="hand-card">
+                <div class="hand-visual" style="background: #f1c40f;"></div>
+                <h3>Model C (Right)</h3>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

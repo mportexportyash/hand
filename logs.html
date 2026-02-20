@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7-Channel Logs - Flex Control</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --accent: #00ffaa;
+            --dark: #1a1a2e;
+            --bg: #0f3460;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace; /* Monospace for aligned data */
+            background: var(--bg);
+            color: white;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar { width: 240px; background: var(--dark); padding: 20px; border-right: 1px solid var(--primary); }
+        .sidebar h2 { color: var(--primary); font-size: 1.2rem; font-family: 'Segoe UI', sans-serif; }
+        .nav-item { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; opacity: 0.6; transition: 0.3s; text-decoration: none; color: white; display: block; }
+        .nav-item:hover { opacity: 1; color: var(--primary); }
+        .nav-item.active { opacity: 1; color: var(--primary); border-left: 3px solid var(--primary); padding-left: 10px; }
+
+        /* --- Main Content --- */
+        .main { flex-grow: 1; display: flex; flex-direction: column; padding: 25px; overflow: hidden; }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn-group { display: flex; gap: 10px; }
+        .btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn:hover { background: var(--primary); color: var(--dark); }
+
+        /* --- Log Table --- */
+        .table-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        thead { position: sticky; top: 0; background: var(--dark); color: var(--primary); }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #222; font-size: 0.9rem; }
+        
+        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        
+        /* Highlight new entries */
+        .new-row { animation: flash 0.8s ease-out; }
+        @keyframes flash {
+            from { background: rgba(0, 210, 255, 0.2); }
+            to { background: transparent; }
+        }
+
+        .status-ok { color: var(--accent); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>FLEX CONTROL</h2>
+        <a href="index.html" class="nav-item">Dashboard</a>
+        <a href="hand-mapping.html" class="nav-item">Hand Mapping</a>
+        <a href="logs.html" class="nav-item active">7-Channel Logs</a>
+        <a href="settings.html" class="nav-item">Settings</a>
+    </div>
+
+    <div class="main">
+        <div class="log-header">
+            <div>
+                <h2 style="margin:0;">System Logs</h2>
+                <small style="opacity:0.5;">Raw Data Stream (Channel 1-7)</small>
+            </div>
+            <div class="btn-group">
+                <button class="btn" onclick="clearLogs()">Clear Logs</button>
+                <button class="btn" style="border-color: var(--accent); color: var(--accent);">Download CSV</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>CH 1</th>
+                        <th>CH 2</th>
+                        <th>CH 3</th>
+                        <th>CH 4</th>
+                        <th>CH 5</th>
+                        <th>CH 6</th>
+                        <th>CH 7</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="logBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const logBody = document.getElementById('logBody');
+        const MAX_ROWS = 50; // Keep performance smooth
+
+        function addLogRow() {
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString() + "." + Math.floor(now.getMilliseconds()/100);
+            
+            const row = document.createElement('tr');
+            row.className = 'new-row';
+
+            let html = `<td>${timestamp}</td>`;
+            
+            // Generate 7 channels of simulated sensor data (0-1023)
+            for(let i=0; i<7; i++) {
+                const val = Math.floor(Math.random() * 1024);
+                html += `<td>${val}</td>`;
+            }
+
+            html += `<td><span class="status-ok">ACTIVE</span></td>`;
+            row.innerHTML = html;
+
+            // Add to top of table
+            logBody.insertBefore(row, logBody.firstChild);
+
+            // Maintain row limit
+            if (logBody.children.length > MAX_ROWS) {
+                logBody.removeChild(logBody.lastChild);
+            }
+        }
+
+        function clearLogs() {
+            logBody.innerHTML = '';
+        }
+
+        // Simulate incoming serial data every 500ms
+        setInterval(addLogRow, 500);
+    </script>
+</body>
+</html>
